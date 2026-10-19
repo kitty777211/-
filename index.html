@@ -46,5 +46,34 @@ const defaults=[['photoArt1','🌷'],['photoArt2','🎞️'],['photoArt3','🌙'
 // Japanese festival-style fireworks canvas.
 const canvas=$('fireworksCanvas'),ctx=canvas.getContext('2d'),finalSection=$('ending');let W=0,H=0,rockets=[],particles=[],lastAuto=0,raf=0;const colors=['#ffd78a','#f5a6c8','#d9b5ff','#a8d8ff','#fff1d6','#ff9f86'];function resizeCanvas(){const rect=finalSection.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);W=rect.width;H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}function launch(x=Math.random()*W,y=H*(.16+Math.random()*.34),power=1){rockets.push({x:x,y:H+10,tx:x,ty:y,vx:(Math.random()-.5)*2,vy:-(5+Math.random()*3)*power,color:colors[Math.floor(Math.random()*colors.length)],trail:[]})}function burst(x,y,color,power=1){const count=Math.round((70+Math.random()*55)*power);for(let i=0;i<count;i++){const a=Math.PI*2*i/count+(Math.random()-.5)*.08,s=(1+Math.random()*4.5)*power;particles.push({x,y,px:x,py:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:65+Math.random()*45,max:110,color:Math.random()<.18?colors[Math.floor(Math.random()*colors.length)]:color,size:.8+Math.random()*2.2,gravity:.035+Math.random()*.035,twinkle:Math.random()})}for(let i=0;i<18;i++){const a=Math.random()*Math.PI*2,s=Math.random()*2;particles.push({x,y,px:x,py:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:35+Math.random()*35,max:70,color:'#fff4cf',size:1+Math.random()*1.5,gravity:.02,twinkle:Math.random()})}}function animateFireworks(t){ctx.clearRect(0,0,W,H);ctx.fillStyle='rgba(33,29,39,.18)';ctx.fillRect(0,0,W,H);if(t-lastAuto>1050&&finalSection.getBoundingClientRect().top<innerHeight&&finalSection.getBoundingClientRect().bottom>0){launch(Math.random()*W,H*(.12+Math.random()*.4),.9+Math.random()*.45);lastAuto=t}rockets=rockets.filter(r=>r.y>r.ty);for(const r of rockets){r.x+=r.vx;r.y+=r.vy;r.vy+=.035;r.trail.push([r.x,r.y]);if(r.trail.length>7)r.trail.shift();ctx.beginPath();ctx.strokeStyle=r.color;ctx.lineWidth=1.5;ctx.globalAlpha=.65;for(let i=1;i<r.trail.length;i++){ctx.moveTo(...r.trail[i-1]);ctx.lineTo(...r.trail[i])}ctx.stroke();ctx.globalAlpha=1;if(r.y<=r.ty||r.vy>-.4)burst(r.x,r.y,r.color,1);else r.ty=Math.min(r.ty,r.y+1)}particles=particles.filter(p=>p.life>0);for(const p of particles){p.px=p.x;p.py=p.y;p.x+=p.vx;p.y+=p.vy;p.vx*=.988;p.vy=p.vy*.988+p.gravity;p.life--;const alpha=Math.max(0,p.life/p.max);ctx.globalAlpha=alpha*(p.twinkle>.82?(Math.sin(t*.04)+1)*.35+.3:1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;raf=requestAnimationFrame(animateFireworks)}function startFireworks(){resizeCanvas();if(!raf)raf=requestAnimationFrame(animateFireworks)}$('fireworkBtn').addEventListener('click',()=>{startFireworks();for(let i=0;i<9;i++)setTimeout(()=>launch(W*(.08+Math.random()*.84),H*(.12+Math.random()*.42),1+Math.random()*.55),i*180);toast('爱心烟火已点亮，所有的喜欢都送给倩倩。♡')});const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))startFireworks()},{threshold:.05});observer.observe(finalSection);window.addEventListener('resize',()=>{if(raf)resizeCanvas()});document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0}else if(!document.hidden&&finalSection.getBoundingClientRect().bottom>0&&finalSection.getBoundingClientRect().top<innerHeight)startFireworks()});document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#wishBtn'))sprinkle(e.clientX,e.clientY,['✧','♡','✦'])});
 </script>
+
+<audio id="bgMusic" src="./%E7%8E%BB%E7%92%83.mp3" loop preload="none"></audio>
+
+<button id="musicToggle" type="button" style="position:fixed;top:18px;right:18px;z-index:99999;border:1px solid #e8b5c1;border-radius:999px;padding:10px 16px;background:#fff0f4;color:#9d4968;cursor:pointer;box-shadow:0 4px 14px #0002;">
+  ♫ 开启音乐
+</button>
+
+<script>
+(() => {
+  const music = document.getElementById('bgMusic');
+  const toggle = document.getElementById('musicToggle');
+
+  if (!music || !toggle) return;
+
+  toggle.addEventListener('click', async () => {
+    if (music.paused) {
+      try {
+        await music.play();
+        toggle.textContent = '♫ 关闭音乐';
+      } catch (error) {
+        toggle.textContent = '播放失败，请检查音乐文件';
+      }
+    } else {
+      music.pause();
+      toggle.textContent = '♫ 开启音乐';
+    }
+  });
+})();
+</script>
 </body>
 </html>
