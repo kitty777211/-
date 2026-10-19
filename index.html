@@ -44,7 +44,7 @@ Always, with love ♡</div><div class="center" style="margin-top:28px"><button c
 <section class="final" id="ending"><canvas id="fireworksCanvas" aria-hidden="true"></canvas><div class="eyebrow">CHAPTER 21 BEGINS</div><h2>To Li Qianqian’s<br><em>beautiful Chapter 21.</em></h2><p>愿你所遇皆温柔，所行皆坦途。<br>愿未来的每一天，都有值得期待的小事。</p><div class="love-story" aria-label="Instagram风格的我爱你动画"><div class="story-top"><div class="story-avatar"><span>♡</span></div><span>our.little.universe · 21</span></div><span class="story-spark one">✦</span><span class="story-spark two">✧</span><span class="story-spark three">♡</span><div class="story-heart" aria-hidden="true">♥</div><div class="story-love">我爱你，老婆</div><div class="story-caption">YOU ARE MY FAVORITE STORY ♡</div></div><p style="margin-top:12px">HAPPY 21ST BIRTHDAY, QIANQIAN · WITH ALL MY LOVE</p><button class="outline-btn heart-icon-btn" id="fireworkBtn" aria-label="点亮爱心烟火" title="点亮爱心烟火">♥</button></section>
 </main><div class="footer">MADE WITH LOVE · A LITTLE BIRTHDAY STORY · ♡</div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <!-- 将真实音乐文件放到项目的 audio/glass.mp3，即可播放。不要使用浏览器 blob: 临时地址。 -->
-<audio id="bgMusic" src="./glass.mp3" loop preload="none"></audio>
+<audio id="bgMusic" src="./glass.MP3.MP3" loop preload="none"></audio>
 <script>
 const $=id=>document.getElementById(id);let toastTimer;
 function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
@@ -58,48 +58,6 @@ const wishInput=$('wishInput'),wishResult=$('wishResult');try{const saved=localS
 const defaults=[['photoArt1','🌷'],['photoArt2','🎞️'],['photoArt3','🌙'],['photoArt4','🧸'],['photoArt5','☕'],['photoArt6','🎀'],['photoArt7','🍓'],['photoArt8','🌸'],['photoArt9','💌']];const photoCards=[...document.querySelectorAll('.photo')];const photoObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');photoObserver.unobserve(entry.target)}}),{threshold:.12});photoCards.forEach((card,i)=>{card.style.transitionDelay=(i%3)*90+'ms';photoObserver.observe(card)});$('photoUpload').addEventListener('change',e=>{const files=[...e.target.files].filter(f=>f.type.startsWith('image/')).slice(0,defaults.length);if(!files.length)return;defaults.forEach(([id,emoji])=>$(id).textContent=emoji);files.forEach((file,i)=>{const reader=new FileReader();reader.onload=ev=>{const art=$(defaults[i][0]);art.replaceChildren();const img=document.createElement('img');img.src=ev.target.result;img.alt='回忆照片 '+(i+1);art.appendChild(img);const card=art.closest('.photo');card.classList.remove('is-visible');requestAnimationFrame(()=>card.classList.add('is-visible'))};reader.readAsDataURL(file)});if(e.target.files.length>defaults.length)toast('照片墙最多展示9张照片，已选取前9张。');else toast('照片已加入回忆墙，刷新后需重新选择。');e.target.value=''});$('resetPhotos').addEventListener('click',()=>{defaults.forEach(([id,emoji])=>$(id).textContent=emoji);toast('已恢复9张装饰占位图。')});
 // Japanese festival-style fireworks canvas.
 const canvas=$('fireworksCanvas'),ctx=canvas.getContext('2d'),finalSection=$('ending');let W=0,H=0,rockets=[],particles=[],lastAuto=0,raf=0;const colors=['#ffd78a','#f5a6c8','#d9b5ff','#a8d8ff','#fff1d6','#ff9f86'];function resizeCanvas(){const rect=finalSection.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);W=rect.width;H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}function launch(x=Math.random()*W,y=H*(.16+Math.random()*.34),power=1){rockets.push({x:x,y:H+10,tx:x,ty:y,vx:(Math.random()-.5)*2,vy:-(5+Math.random()*3)*power,color:colors[Math.floor(Math.random()*colors.length)],trail:[]})}function burst(x,y,color,power=1){const count=Math.round((70+Math.random()*55)*power);for(let i=0;i<count;i++){const a=Math.PI*2*i/count+(Math.random()-.5)*.08,s=(1+Math.random()*4.5)*power;particles.push({x,y,px:x,py:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:65+Math.random()*45,max:110,color:Math.random()<.18?colors[Math.floor(Math.random()*colors.length)]:color,size:.8+Math.random()*2.2,gravity:.035+Math.random()*.035,twinkle:Math.random()})}for(let i=0;i<18;i++){const a=Math.random()*Math.PI*2,s=Math.random()*2;particles.push({x,y,px:x,py:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:35+Math.random()*35,max:70,color:'#fff4cf',size:1+Math.random()*1.5,gravity:.02,twinkle:Math.random()})}}function animateFireworks(t){ctx.clearRect(0,0,W,H);ctx.fillStyle='rgba(33,29,39,.18)';ctx.fillRect(0,0,W,H);if(t-lastAuto>1050&&finalSection.getBoundingClientRect().top<innerHeight&&finalSection.getBoundingClientRect().bottom>0){launch(Math.random()*W,H*(.12+Math.random()*.4),.9+Math.random()*.45);lastAuto=t}rockets=rockets.filter(r=>r.y>r.ty);for(const r of rockets){r.x+=r.vx;r.y+=r.vy;r.vy+=.035;r.trail.push([r.x,r.y]);if(r.trail.length>7)r.trail.shift();ctx.beginPath();ctx.strokeStyle=r.color;ctx.lineWidth=1.5;ctx.globalAlpha=.65;for(let i=1;i<r.trail.length;i++){ctx.moveTo(...r.trail[i-1]);ctx.lineTo(...r.trail[i])}ctx.stroke();ctx.globalAlpha=1;if(r.y<=r.ty||r.vy>-.4)burst(r.x,r.y,r.color,1);else r.ty=Math.min(r.ty,r.y+1)}particles=particles.filter(p=>p.life>0);for(const p of particles){p.px=p.x;p.py=p.y;p.x+=p.vx;p.y+=p.vy;p.vx*=.988;p.vy=p.vy*.988+p.gravity;p.life--;const alpha=Math.max(0,p.life/p.max);ctx.globalAlpha=alpha*(p.twinkle>.82?(Math.sin(t*.04)+1)*.35+.3:1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;raf=requestAnimationFrame(animateFireworks)}function startFireworks(){resizeCanvas();if(!raf)raf=requestAnimationFrame(animateFireworks)}$('fireworkBtn').addEventListener('click',()=>{startFireworks();for(let i=0;i<9;i++)setTimeout(()=>launch(W*(.08+Math.random()*.84),H*(.12+Math.random()*.42),1+Math.random()*.55),i*180);toast('爱心烟火已点亮，所有的喜欢都送给倩倩。♡')});const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))startFireworks()},{threshold:.05});observer.observe(finalSection);window.addEventListener('resize',()=>{if(raf)resizeCanvas()});document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0}else if(!document.hidden&&finalSection.getBoundingClientRect().bottom>0&&finalSection.getBoundingClientRect().top<innerHeight)startFireworks()});document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#wishBtn'))sprinkle(e.clientX,e.clientY,['✧','♡','✦'])});
-</script>
-
-<!-- 背景音乐 -->
-<audio id="bgMusic" loop preload="none">
-  <source src="./audio/boli.mp3" type="audio/mpeg">
-</audio>
-
-<button id="musicButton"
-  onclick="toggleMusic()"
-  style="
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    z-index:9999;
-    padding:12px 18px;
-    border:0;
-    border-radius:30px;
-    background:#e9a6c4;
-    color:white;
-    font-size:15px;
-    cursor:pointer;
-  ">
-  ♫ 开启音乐
-</button>
-
-<script>
-  const music = document.getElementById("bgMusic");
-  const musicButton = document.getElementById("musicButton");
-
-  async function toggleMusic() {
-    if (music.paused) {
-      try {
-        await music.play();
-        musicButton.textContent = "♫ 关闭音乐";
-      } catch (error) {
-        musicButton.textContent = "播放失败，请检查音乐文件";
-      }
-    } else {
-      music.pause();
-      musicButton.textContent = "♫ 开启音乐";
-    }
-  }
 </script>
 </body>
 </html>
